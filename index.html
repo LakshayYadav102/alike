@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Nation Liker</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; }
+        label { margin-bottom: 10px; }
+        input { padding: 10px; margin-bottom: 20px; }
+        button { padding: 10px; color: white; border: none; cursor: pointer; margin-bottom: 10px; }
+        #startBtn { background-color: #007bff; }
+        #startBtn:hover { background-color: #0056b3; }
+        #stopBtn { background-color: #dc3545; }
+        #stopBtn:hover { background-color: #c82333; }
+        #stopBtn:disabled, #startBtn:disabled { background-color: #6c757d; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <h1>Startup Nation Liker</h1>
+    <form action="/start" method="POST" id="startForm">
+        <label for="url">Target Page URL:</label>
+        <input type="url" id="url" name="url" placeholder="Enter the Startup Nation product URL" required>
+        <button type="submit" id="startBtn">Start Liking</button>
+    </form>
+    <button id="stopBtn" onclick="stopLiking()" disabled>Stop Liking</button>
+
+    <script>
+        async function stopLiking() {
+            try {
+                const response = await fetch('/stop', { method: 'POST' });
+                const result = await response.text();
+                alert(result);
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('startBtn').disabled = false;
+            } catch (error) {
+                alert('Error stopping the process: ' + error.message);
+            }
+        }
+
+        document.getElementById('startForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const urlInput = form.querySelector('#url').value;
+            if (!urlInput) {
+                alert('Please provide a valid URL.');
+                return;
+            }
+            try {
+                const response = await fetch('/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `url=${encodeURIComponent(urlInput)}`
+                });
+                const result = await response.text();
+                if (response.ok) {
+                    alert(result);
+                    document.getElementById('stopBtn').disabled = false;
+                    document.getElementById('startBtn').disabled = true;
+                } else {
+                    alert('Error: ' + result);
+                }
+            } catch (error) {
+                alert('Error starting the process: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
