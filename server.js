@@ -61,7 +61,7 @@ async function startLiking(targetUrl) {
   const PERIOD_MS = 5_000;        // Wait between iterations
   const POLL_INTERVAL_MS = 2500;  // Poll email every 2.5s
   const POLL_TIMEOUT_MS = 120_000; // Max wait for OTP
-  const HEADLESS = true;          // Set to true for server
+  const HEADLESS = true;          // Required for Render
   const NAV_TIMEOUT = 120000;     // Navigation timeout
   const SCREENSHOT_ON_ERROR = true; // Save screenshots on errors
   const MAX_RETRIES = 3;          // Retry on errors
@@ -133,7 +133,8 @@ async function startLiking(targetUrl) {
     }
   }
 
-  browser = await chromium.launch({ headless: HEADLESS });
+  // Launch browser with no sandbox
+  browser = await chromium.launch({ headless: HEADLESS, chromiumSandbox: false });
 
   async function setupContextAndPages() {
     if (context) {
